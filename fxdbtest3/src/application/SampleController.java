@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.Statement;
@@ -58,7 +57,7 @@ public class SampleController {
 		} catch (SQLException e) {
 			System.out.println("SQL 실행 에러");
 		} 
-
+		txtid.requestFocus();
 		tablelookup();
 	}
 	@FXML
@@ -82,13 +81,10 @@ public class SampleController {
 
 	public void tablelookup() {
 		try {
-			//	stmt = conn.prepareStatement("select * from student");
 			stmt = conn.createStatement();
 			srs = stmt.executeQuery("select * from student");
 
 			list = FXCollections.observableArrayList();
-			//		ResultSetMetaData rsd = srs.getMetaData();
-			//		int c = rsd.getColumnCount();
 			while(srs.next()) {
 				String r1 = srs.getString("id");
 				String r2 = srs.getString("name");
@@ -105,6 +101,8 @@ public class SampleController {
 				col_phone.setCellValueFactory(new PropertyValueFactory<Student,String>("phone"));										
 
 				tableContent.setItems(list);
+				
+				txtid.requestFocus();
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -190,8 +188,15 @@ public class SampleController {
 			pst.setString(3, r4);
 			pst.setString(4, r1);
 
-			pst.executeUpdate();
-			JOptionPane.showMessageDialog(null, "Student update!");
+
+			if(index.equals(r1)) {
+				JOptionPane.showMessageDialog(null, "Student update!");
+				pst.executeUpdate();
+			} else
+			{
+				JOptionPane.showMessageDialog(null, "Different id");
+			}
+			
 			cleartext();
 
 			tablelookup();	
